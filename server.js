@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 app.use((req, res, next) => {
-  const auth = { login: 'admin', password: '1234' };
+  const auth = { login: 'principessa', password: 'bubulovesyou' };
 
   const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
   const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':');
@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('<h1>You are logged in</h1>');
+  res.send('<h1>www.google.com</h1>');
 });
 
 const PORT = process.env.PORT || 3000;
