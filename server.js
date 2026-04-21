@@ -16,13 +16,25 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('
+  res.send(`
     <h1>You're Logged In Baby</h1>
-    <a href="https://www.mediafire.com/file/88bdbluweoug4tn/Intro_to_the_World_of_Data_Science_and_AI.mp4/file" target="_blank">Intro to the World of Data Science and AI</a>
-    <a href="https://www.mediafire.com/file/r0podthzia5fnbf/Introduction_to_Python.mp4/file" target="_blank">Introduction to Python</a>
-    <a href="https://www.mediafire.com/file/x42jm7j6agulej6/Data_Science_and_Artificial_Intelligence_Application_Case_Study.mp4/file" target="_blank">Data Science and Artificial Intelligence</a>
-    <a href="https://www.mediafire.com/file/86wwfff4hidl07a/Mathematics_and_Statistics_Behind_DS.mp4/file" target="_blank">Mathematics and Statistics Behind DS</a>    
-  ');
+
+    <a href="https://www.mediafire.com/file/88bdbluweoug4tn/Intro_to_the_World_of_Data_Science_and_AI.mp4/file" target="_blank">
+      Intro to the World of Data Science and AI
+    </a><br><br>
+
+    <a href="https://www.mediafire.com/file/r0podthzia5fnbf/Introduction_to_Python.mp4/file" target="_blank">
+      Introduction to Python
+    </a><br><br>
+
+    <a href="https://www.mediafire.com/file/x42jm7j6agulej6/Data_Science_and_Artificial_Intelligence_Application_Case_Study.mp4/file" target="_blank">
+      Data Science and Artificial Intelligence
+    </a><br><br>
+
+    <a href="https://www.mediafire.com/file/86wwfff4hidl07a/Mathematics_and_Statistics_Behind_DS.mp4/file" target="_blank">
+      Mathematics and Statistics Behind DS
+    </a>
+  `);
 });
 
 const PORT = process.env.PORT || 3000;
