@@ -4,35 +4,36 @@ const path = require('path');
 
 const app = express();
 
-// Middleware
+// Parse form data
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
 
+// Session setup
 app.use(session({
   secret: 'supersecretkey',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false // IMPORTANT: stops auto-login
 }));
 
-// Hardcoded user (you can upgrade later)
+// Hardcoded user
 const USER = {
   username: 'principessa',
   password: 'bubulovesyou'
 };
 
-// Auth middleware
+// 🔒 Middleware to protect routes
 function requireLogin(req, res, next) {
-  if (req.session.user) {
-    return next();
-  }
+  if (req.session.user) return next();
   res.redirect('/login');
 }
 
-// Routes
+// ✅ LOGIN PAGE (public)
 app.get('/login', (req, res) => {
+  // If already logged in, go to home
+  if (req.session.user) return res.redirect('/');
   res.sendFile(path.join(__dirname, 'public/login.html'));
 });
 
+// ✅ HANDLE LOGIN
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -44,15 +45,24 @@ app.post('/login', (req, res) => {
   res.send('Wrong login');
 });
 
+// ✅ LOGOUT
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/login');
   });
 });
 
-app.get('/', requireLogin, (req, res) => {
+// 🔒 EVERYTHING BELOW REQUIRES LOGIN
+app.use(requireLogin);
+
+// Serve static files ONLY after login
+app.use(express.static('public'));
+
+// Homepage
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
+// Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Running'));
+app.listen(PORT, () => console.log('Running on port ' + PORT));
