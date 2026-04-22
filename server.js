@@ -17,8 +17,8 @@ const USER = {
   password: 'bubulovesyou'
 };
 
-// ✅ Allow CSS/images publicly
-app.use('/style.css', express.static(path.join(__dirname, 'public/style.css')));
+// ✅ ALWAYS allow static files (CSS, etc.)
+app.use(express.static('public'));
 
 // 🔒 Auth middleware
 function requireLogin(req, res, next) {
@@ -51,14 +51,8 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// 🔒 Protect everything else
-app.use(requireLogin);
-
-// Now allow all files after login
-app.use(express.static('public'));
-
-// Home
-app.get('/', (req, res) => {
+// 🔒 Protect ONLY the homepage
+app.get('/', requireLogin, (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
