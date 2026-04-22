@@ -18,7 +18,7 @@ app.use(session({
 // 🔐 Replace with YOUR generated hash
 const USER = {
   username: 'principessa',
-  password: '$2b$10$7QJQx0D6G2G9GqGQm6h3pO9g7n0R6kZlXQk9Gg7rJp2C6pQzQz0eG'
+  password: '$2b$10$zPk2igSjmdB4HTug5P0zKe4h8QOwgoExbnccwXkGiPF66ZfFPAzWu'
 };
 
 // Auth middleware
