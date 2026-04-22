@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const bcrypt = require('bcrypt');
 const path = require('path');
 
 const app = express();
@@ -11,58 +12,61 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: 'supersecretkey',
   resave: false,
-  saveUninitialized: false // IMPORTANT: stops auto-login
+  saveUninitialized: false
 }));
 
-// Hardcoded user
+// 🔐 Replace with YOUR generated hash
 const USER = {
   username: 'principessa',
-  password: 'bubulovesyou'
+  password: '$2b$10$7QJQx0D6G2G9GqGQm6h3pO9g7n0R6kZlXQk9Gg7rJp2C6pQzQz0eG'
 };
 
-// 🔒 Middleware to protect routes
+// Auth middleware
 function requireLogin(req, res, next) {
   if (req.session.user) return next();
   res.redirect('/login');
 }
 
-// ✅ LOGIN PAGE (public)
+// Login page
 app.get('/login', (req, res) => {
-  // If already logged in, go to home
   if (req.session.user) return res.redirect('/');
   res.sendFile(path.join(__dirname, 'public/login.html'));
 });
 
-// ✅ HANDLE LOGIN
-app.post('/login', (req, res) => {
+// Handle login
+app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  if (username === USER.username && password === USER.password) {
-    req.session.user = username;
-    return res.redirect('/');
+  if (username === USER.username) {
+    const match = await bcrypt.compare(password, USER.password);
+
+    if (match) {
+      req.session.user = username;
+      return res.redirect('/');
+    }
   }
 
   res.send('Wrong login');
 });
 
-// ✅ LOGOUT
+// Logout
 app.get('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/login');
   });
 });
 
-// 🔒 EVERYTHING BELOW REQUIRES LOGIN
+// 🔒 Protect everything below
 app.use(requireLogin);
 
-// Serve static files ONLY after login
+// Serve static files AFTER login
 app.use(express.static('public'));
 
-// Homepage
+// Home
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// Start server
+// Start
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log('Running on port ' + PORT));
