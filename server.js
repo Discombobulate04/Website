@@ -4,21 +4,21 @@ const path = require('path');
 
 const app = express();
 
-// Parse form data
 app.use(express.urlencoded({ extended: true }));
 
-// Session setup
 app.use(session({
   secret: 'simple-secret',
   resave: false,
   saveUninitialized: false
 }));
 
-// Simple login (no hashing)
 const USER = {
   username: 'principessa',
   password: 'bubulovesyou'
 };
+
+// ✅ Allow CSS/images publicly
+app.use('/style.css', express.static(path.join(__dirname, 'public/style.css')));
 
 // 🔒 Auth middleware
 function requireLogin(req, res, next) {
@@ -41,7 +41,7 @@ app.post('/login', (req, res) => {
     return res.redirect('/');
   }
 
-  res.send('<h2 style="color:white;text-align:center;margin-top:50px;">Wrong login</h2>');
+  res.send('Wrong login');
 });
 
 // Logout
@@ -51,10 +51,10 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// 🔒 Protect everything below
+// 🔒 Protect everything else
 app.use(requireLogin);
 
-// Serve files AFTER login
+// Now allow all files after login
 app.use(express.static('public'));
 
 // Home
@@ -62,6 +62,4 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log('Running on port ' + PORT));
+app.listen(process.env.PORT || 3000, () => console.log('Running'));
